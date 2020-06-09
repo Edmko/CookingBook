@@ -1,0 +1,41 @@
+package com.example.cookingbook.ui.addRecipe
+
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.cookingbook.R
+import kotlinx.android.synthetic.main.ingredient_card.view.*
+
+class IngredientsAdapter(
+    private val context: Context,
+    private val data: MutableList<Pair<String, String>>
+) : RecyclerView.Adapter<IngredientsAdapter.IngredientsViewHolder>() {
+
+
+    override fun getItemCount(): Int {
+        return data.size
+    }
+
+    override fun onBindViewHolder(holder: IngredientsViewHolder, position: Int) {
+        holder.ingredient.text = data[position].first
+        holder.value.text = data[position].second
+
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientsViewHolder {
+        return IngredientsViewHolder(
+            LayoutInflater.from(context).inflate(
+                R.layout.ingredient_card, parent, false
+            )
+        )
+    }
+
+    inner class IngredientsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val ingredient: TextView = itemView.ingredient
+        val value: TextView = itemView.value
+
+    }
+}

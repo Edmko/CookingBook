@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">CookingBook</string>
+    <string name="save_recipe">Save Recipe</string>
+    <string name="notes">Notes</string>
+    <string name="add_ingredient">Add ingredient</string>
+    <string name="value">Value</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="tags">Tags</string>
+    <string name="insert_name_of_author">Insert name of author</string>
+    <string name="insert_name_of_recipe">Insert name of recipe</string>
+    <string name="image_of_recipe">Image of recipe</string>
+    <string name="name">Name</string>
+    <string name="author">Author</string>
+    <string name="ingredients">Ingredients:</string>
+    <string name="notes_v">Notes:</string>
+    <string name="edit_recipe">Edit Recipe</string>
+    <string name="deleteRecipe">Delete this recipe?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="task_not_found">Task not found!</string>
+    <string name="add_tag">Add Tag</string>
+</resources>
