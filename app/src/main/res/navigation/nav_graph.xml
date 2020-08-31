@@ -26,9 +26,6 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/mainFragment" />
-        <argument
-            android:name="recipeId"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addRecipeFragment"
@@ -37,8 +34,9 @@
         tools:layout="@layout/add_recipe_fragment">
         <argument
             android:name="recipeId"
-            android:defaultValue=""
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
         <action
             android:id="@+id/action_addRecipeFragment_to_recipeFragment"
             app:destination="@id/recipeFragment"

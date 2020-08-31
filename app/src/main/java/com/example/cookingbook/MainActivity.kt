@@ -2,6 +2,7 @@ package com.example.cookingbook
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.youtube.player.YouTubeBaseActivity
 
 class MainActivity : AppCompatActivity() {
 

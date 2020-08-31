@@ -3,6 +3,7 @@ package com.example.cookingbook.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.cookingbook.db.DatabaseRecipe
+import com.example.cookingbook.models.Recipe
 
 @Dao
 interface RecipeDao {
@@ -19,7 +20,10 @@ interface RecipeDao {
     fun deleteAllRecipes()
 
     @Query("Select * from recipe Where id=:id LIMIT 1")
-    fun getRecipeById(vararg id: String): LiveData<DatabaseRecipe>
+    fun observeRecipeById(vararg id: String): LiveData<DatabaseRecipe>
+
+    @Query("Select * from recipe Where id=:id LIMIT 1")
+    fun getRecipeById(vararg id: String): DatabaseRecipe?
 
     @Query("Select * from recipe")
     fun getAllRecipes(): LiveData<List<DatabaseRecipe>>

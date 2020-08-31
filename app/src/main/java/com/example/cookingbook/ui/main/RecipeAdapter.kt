@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.cookingbook.R
 import com.example.cookingbook.db.DatabaseRecipe
 import com.example.cookingbook.models.Recipe
@@ -33,6 +35,7 @@ class RecipeAdapter(
             if (this[position].image != "") {
                 Glide.with(holder.itemView.context)
                     .load(this[position].image)
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(14)))
                     .into(holder.image)
             } else holder.image.setImageResource(R.drawable.ic_insert_photo_24px)
             holder.itemView.setOnClickListener {

@@ -11,7 +11,6 @@ import com.example.cookingbook.utils.OnTagClickListener
 import kotlinx.android.synthetic.main.tags_recycler_item.view.*
 
 class TagsAdapter(
-    private val context: Context,
     private val data: List<String>,
     private val listener : OnTagClickListener
 ) : RecyclerView.Adapter<TagsAdapter.TagsViewHolder>(){
@@ -29,7 +28,7 @@ class TagsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagsAdapter.TagsViewHolder {
         return TagsViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.tags_recycler_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.tags_recycler_item, parent, false)
         )
     }
 

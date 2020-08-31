@@ -1,6 +1,5 @@
 package com.example.cookingbook.ui.addRecipe
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,7 @@ import com.example.cookingbook.R
 import kotlinx.android.synthetic.main.ingredient_card.view.*
 
 class IngredientsAdapter(
-    private val context: Context,
-    private val data: MutableList<Pair<String, String>>
+    private val data: List<Pair<String, String>>
 ) : RecyclerView.Adapter<IngredientsAdapter.IngredientsViewHolder>() {
 
 
@@ -27,7 +25,7 @@ class IngredientsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IngredientsViewHolder {
         return IngredientsViewHolder(
-            LayoutInflater.from(context).inflate(
+            LayoutInflater.from(parent.context).inflate(
                 R.layout.ingredient_card, parent, false
             )
         )

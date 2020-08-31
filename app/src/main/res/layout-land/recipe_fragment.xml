@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     tools:context=".ui.recipeFragment.RecipeFragment">
 
@@ -29,7 +30,7 @@
                 android:maxLines="2"
                 android:text="@string/name"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
+                android:textColor="@color/black"
                 android:textSize="23sp" />
 
             <ImageView
@@ -75,8 +76,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="15dp"
-        android:layout_weight="1"
-        android:fillViewport="false">
+        android:layout_weight="1">
 
 
         <LinearLayout
@@ -102,14 +102,15 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:text="@string/ingredients"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
                     android:textSize="22sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/ingredientsList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp" />
+                    android:layout_margin="5dp"
+                    android:overScrollMode="never"/>
 
             </LinearLayout>
 
@@ -130,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:text="@string/notes_v"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
                     android:textSize="22sp" />
 
                 <TextView
@@ -146,6 +147,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="15dp" />
 
+            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                android:id="@+id/youtube_player_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:autoPlay="false"/>
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

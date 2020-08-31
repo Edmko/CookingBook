@@ -2,18 +2,17 @@ package com.example.cookingbook.ui.addRecipe
 
 import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -21,67 +20,75 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.example.cookingbook.CookingApplication.Companion.appContext
 import com.example.cookingbook.R
-import com.example.cookingbook.models.Tags
+import com.example.cookingbook.databinding.AddRecipeFragmentBinding
 import com.example.cookingbook.utils.OnTagClickListener
 import com.example.cookingbook.utils.hideKeyboardEx
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.add_recipe_fragment.*
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
-    val REQUEST_IMAGE_CAPTURE = 1
-    private lateinit var viewModel: AddRecipeViewModel
+
+    private lateinit var viewDataBinding: AddRecipeFragmentBinding
+    private val viewModel: AddRecipeViewModel by viewModels()
     private val args: AddRecipeFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        ViewModelProvider(this).get(AddRecipeViewModel::class.java)
+        val root = inflater.inflate(R.layout.add_recipe_fragment, container, false)
+        viewDataBinding = AddRecipeFragmentBinding.bind(root).apply {
+            this.viewmodel = viewModel
+        }
 
-        return inflater.inflate(R.layout.add_recipe_fragment, container, false)
+        // Set the lifecycle owner to the lifecycle of the view
+        viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
+        return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(AddRecipeViewModel::class.java)
+        viewModel.getRecipe(args.recipeId)
+
         ingredientsList.layoutManager = LinearLayoutManager(context)
+        tags_recycler.layoutManager = FlexboxLayoutManager(activity as Context)
 
-        if (viewModel.checkTemp() && args.recipeId.isNotEmpty()) {
-            viewModel.getRecipe(args.recipeId, viewLifecycleOwner)
-        }
-//        val autoCompleteAdapter : ArrayAdapter<String> = ArrayAdapter(activity as Context, R.layout.add_recipe_fragment, R.id.addIngredient_text)
-//        add_tag_text.setAdapter(autoCompleteAdapter)
-        viewModel.recipe.observe(viewLifecycleOwner, Observer {
-            author_text.setText(it.author)
-            notes_text.setText(it.notes)
-            name_text.setText(it.name)
+        photo.setOnClickListener(this)
+        addIngredientButton.setOnClickListener(this)
+        save_recipe.setOnClickListener(this)
+        addTagButton.setOnClickListener(this)
 
+        viewModel.ingredients.observe(viewLifecycleOwner, Observer {
             ingredientsList.adapter = null
             ingredientsList.adapter =
-                IngredientsAdapter(activity as Context, it.ingredients)
-
-
-            tags_recycler.layoutManager = FlexboxLayoutManager(activity as Context)
-            tags_recycler.adapter = TagsAdapter(activity as Context, it.tags, this)
-
-            if (it.image != "") {
-                val file = File(it.image)
-                val options = BitmapFactory.Options()
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888
-                try {
-                    val bitmap =
-                        BitmapFactory.decodeStream(FileInputStream(file), null, options)
-                    photo.setImageBitmap(bitmap)
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                }
-            }
+                IngredientsAdapter(it)
         })
+        viewModel.tags.observe(viewLifecycleOwner, Observer {
+            tags_recycler.adapter = TagsAdapter(it, this)
+        })
+        viewModel.image.observe(viewLifecycleOwner, Observer {
 
+            if (it != "") {
+                photo.background = null
+                Glide.with(requireActivity())
+                    .load(it)
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(14)))
+                    .into(photo)
+            }
+
+        })
 
         val simpleItemTouchCallBack = object : ItemTouchHelper.SimpleCallback(
             0,
@@ -96,66 +103,94 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                viewModel.removeIngredientFromList(viewHolder.adapterPosition)
+                viewModel.removeIngredientFromList(
+                    viewHolder.adapterPosition
+                )
             }
         }
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallBack)
         itemTouchHelper.attachToRecyclerView(ingredientsList)
-
-
-
-        photo.setOnClickListener(this)
-        addIngredientButton.setOnClickListener(this)
-        save_recipe.setOnClickListener(this)
-        addTagButton.setOnClickListener(this)
 
         super.onActivityCreated(savedInstanceState)
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            photo.setImageBitmap(imageBitmap)
-            val root =
-                requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
-            if (!root.isNullOrEmpty()) {
-                val imgFile = File(root, UUID.randomUUID().toString() + ".jpg")
-                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, FileOutputStream(imgFile))
-                viewModel.updateImage(imgFile.canonicalPath)
-            }
 
-        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+            if (resultCode == RESULT_OK) {
+                val result = CropImage.getActivityResult(data)
+                val resultUri = result.uri
+                var bitmap: Bitmap? = null
+
+                try {
+                    bitmap =
+                        MediaStore.Images.Media.getBitmap(appContext.contentResolver, resultUri)
+
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                val contextWrapper = ContextWrapper(appContext)
+                val directory = contextWrapper.getDir("imageDir", Context.MODE_PRIVATE)
+                directory.mkdirs()
+
+                val fileName =
+                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                val fName = "$fileName.jpg"
+                val file = File(directory, fName)
+                if (file.exists()) file.delete()
+                try {
+                    val fos = FileOutputStream(file)
+                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                    fos.flush()
+                    fos.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                val uri = Uri.fromFile(file)
+
+                photo.setImageURI(uri)
+                viewModel.updateImage(
+                    uri.toString()
+                )
+            }
     }
 
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.photo -> {
-                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                    takePictureIntent.resolveActivity(requireActivity().packageManager).also {
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                    }
-                }
+                CropImage.activity()
+                    .setAspectRatio(1, 1)
+                    .setMinCropResultSize(1000, 1000)
+                    .setGuidelines(CropImageView.Guidelines.OFF)
+                    .start(activity as Context, this)
             }
             R.id.addIngredientButton -> {
-                viewModel.addIngredientToList(Pair(addIngredient_text.text.toString(), addValue_text.text.toString()))
+                viewModel.addIngredientToList(
+                    Pair(
+                        addIngredient_text.text.toString(),
+                        addValue_text.text.toString()
+                    )
+                )
                 addIngredient_text.text?.clear()
                 addValue_text.text?.clear()
                 activity?.hideKeyboardEx()
             }
             R.id.save_recipe -> {
-                viewModel.saveRecipe(
-                    name_text.text.toString(),
-                    author_text.text.toString(),
-                    notes_text.text.toString()
-                )
+
                 val action =
-                    AddRecipeFragmentDirections.actionAddRecipeFragmentToRecipeFragment(viewModel.recipe.value!!.id)
+                    AddRecipeFragmentDirections.actionAddRecipeFragmentToRecipeFragment(
+                        viewModel.saveRecipe()
+                    )
                 findNavController().navigate(action)
             }
             R.id.addTagButton -> {
-                viewModel.addTagToList(add_tag_text.text.toString())
+                viewModel.addTagToList(
+                    add_tag_text.text.toString()
+                )
                 add_tag_text.text?.clear()
                 activity?.hideKeyboardEx()
             }
@@ -163,7 +198,8 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
     }
 
     override fun onItemClick(pos: Int) {
-        viewModel.removeTagFromList(pos)
+        viewModel.removeTagFromList(
+            pos
+        )
     }
-
 }

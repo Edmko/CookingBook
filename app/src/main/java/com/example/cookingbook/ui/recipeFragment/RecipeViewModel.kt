@@ -14,8 +14,9 @@ import kotlinx.coroutines.launch
 class RecipeViewModel : ViewModel() {
     var repository: AppRepository = AppRepository()
     lateinit var recipe: LiveData<Recipe>
+    var currentSecondYouTube = 0F
 
     fun getRecipe(idArgs: String) {
-        recipe = repository.getRecipeById(idArgs)
+       recipe = repository.observeRecipeById(idArgs)
     }
 }

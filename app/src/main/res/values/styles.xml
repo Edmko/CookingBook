@@ -1,3 +1,5 @@
 <resources>
-
+    <style name="MyDropDownNav" parent="android:style/Theme.Holo.Light">
+        <item name="android:divider">@null</item>
+    </style>
 </resources>
