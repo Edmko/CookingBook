@@ -9,7 +9,7 @@
 
         <variable
             name="viewmodel"
-            type="com.example.cookingbook.ui.addRecipe.AddRecipeViewModel" />
+            type="com.edmko.cookingbook.ui.addRecipe.AddRecipeViewModel" />
     </data>
 
     <RelativeLayout
@@ -137,7 +137,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/addIngredient"
