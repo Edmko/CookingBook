@@ -2,7 +2,9 @@ package com.edmko.cookingbook
 
 import android.app.Application
 import android.content.Context
-import com.edmko.cookingbook.db.AppDatabase
+import com.edmko.cookingbook.data.AppDatabase
+import com.edmko.cookingbook.repository.AppRepository
+import java.util.*
 
 open class CookingApplication : Application() {
 

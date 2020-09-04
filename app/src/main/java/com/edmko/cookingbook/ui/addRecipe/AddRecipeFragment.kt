@@ -28,7 +28,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.edmko.cookingbook.CookingApplication.Companion.appContext
 import com.edmko.cookingbook.R
+import com.edmko.cookingbook.ViewModelFactory
 import com.edmko.cookingbook.databinding.AddRecipeFragmentBinding
+import com.edmko.cookingbook.repository.AppRepository
+import com.edmko.cookingbook.ui.main.MainViewModel
 import com.edmko.cookingbook.utils.OnTagClickListener
 import com.edmko.cookingbook.utils.hideKeyboardEx
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -44,14 +47,13 @@ import java.util.*
 class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
 
     private lateinit var viewDataBinding: AddRecipeFragmentBinding
-    private val viewModel: AddRecipeViewModel by viewModels()
+    private val viewModel by viewModels<AddRecipeViewModel> { ViewModelFactory(AppRepository(), this) }
     private val args: AddRecipeFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        ViewModelProvider(this).get(AddRecipeViewModel::class.java)
         val root = inflater.inflate(R.layout.add_recipe_fragment, container, false)
         viewDataBinding = AddRecipeFragmentBinding.bind(root).apply {
             this.viewmodel = viewModel

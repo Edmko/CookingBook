@@ -6,8 +6,6 @@
     <string name="value">Value</string>
     <string name="ingredient">Ingredient</string>
     <string name="tags">Tags</string>
-    <string name="insert_name_of_author">Insert name of author</string>
-    <string name="insert_name_of_recipe">Insert name of recipe</string>
     <string name="image_of_recipe">Image of recipe</string>
     <string name="name">Name</string>
     <string name="author">Author</string>
@@ -17,8 +15,6 @@
     <string name="deleteRecipe">Delete this recipe?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-    <string name="task_not_found">Task not found!</string>
     <string name="add_tag">Add Tag</string>
-    <string name="link">Link</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="link">Youtube link</string>
 </resources>

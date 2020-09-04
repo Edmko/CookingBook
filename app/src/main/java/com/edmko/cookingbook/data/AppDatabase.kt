@@ -1,10 +1,10 @@
-package com.edmko.cookingbook.db
+package com.edmko.cookingbook.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.edmko.cookingbook.db.dao.RecipeDao
+import com.edmko.cookingbook.data.dao.RecipeDao
 
 @Database(entities = [DatabaseRecipe::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {

@@ -4,18 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edmko.cookingbook.Result
+import com.edmko.cookingbook.data.Result
 import com.edmko.cookingbook.models.Recipe
 import com.edmko.cookingbook.repository.AppRepository
 import kotlinx.coroutines.launch
 import java.util.*
 
-class AddRecipeViewModel() : ViewModel() {
-    var repository: AppRepository = AppRepository()
+class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel() {
     private var _recipe = MutableLiveData<Recipe>()
     val recipe: LiveData<Recipe> = _recipe
-
-
 
     val name = MutableLiveData<String>()
 
@@ -66,7 +63,7 @@ class AddRecipeViewModel() : ViewModel() {
                 _dataLoading.value = true
 
                 viewModelScope.launch {
-                    repository.getRecipeById(recipeId).let { result ->
+                    appRepository.getRecipeById(recipeId).let { result ->
                         if (result is Result.Success) {
                             onRecipeLoaded(result.data)
                         } else {
@@ -146,16 +143,17 @@ class AddRecipeViewModel() : ViewModel() {
             image = currentImage,
             tags = currentTags,
             ingredients = currentIngredients,
-            link = currentLink,
+            link = currentLink.removePrefix("https://youtu.be/"),
             notes = currentNotes
         )
         createRecipe(recipe)
         return currentRecipeId
     }
 
-    private fun createRecipe(newRecipe: Recipe) {
-        repository.saveRecipe(newRecipe)
-
+    private fun createRecipe(newRecipe: Recipe) = viewModelScope.launch  {
+        appRepository.saveRecipe(newRecipe)
     }
+
+
 
 }

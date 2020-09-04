@@ -50,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
                         android:layout_toEndOf="@+id/photo"
-                        android:hint="@string/insert_name_of_recipe"
+                        android:hint="@string/name"
                         app:hintTextColor="@color/colorPrimary">
 
 
@@ -70,7 +70,7 @@
                         android:layout_below="@+id/name"
                         android:layout_margin="5dp"
                         android:layout_toEndOf="@+id/photo"
-                        android:hint="@string/insert_name_of_author"
+                        android:hint="@string/author"
                         android:inputType="textPersonName">
 
                         <com.google.android.material.textfield.TextInputEditText

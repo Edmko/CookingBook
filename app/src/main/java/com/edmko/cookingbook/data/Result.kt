@@ -1,6 +1,6 @@
-package com.edmko.cookingbook
+package com.edmko.cookingbook.data
 
-import com.edmko.cookingbook.Result.Success
+import com.edmko.cookingbook.data.Result.Success
 
 /**
  * A generic class that holds a value with its loading status.

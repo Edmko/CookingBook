@@ -3,38 +3,36 @@ package com.edmko.cookingbook.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.edmko.cookingbook.CookingApplication
-import com.edmko.cookingbook.Result
-import com.edmko.cookingbook.db.asDomainRecipe
+import com.edmko.cookingbook.data.Result
+import com.edmko.cookingbook.data.asDomainRecipe
 import com.edmko.cookingbook.models.Recipe
 import com.edmko.cookingbook.models.asDatabaseRecipe
 import kotlinx.coroutines.*
 import java.lang.Exception
 
-class AppRepository {
+class AppRepository : RecipesRepository{
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-    private val dataBase = CookingApplication.appDatabase.recipeDao
+    private val localDataSource = CookingApplication.appDatabase.recipeDao
 
-    val recipes: LiveData<List<Recipe>> = Transformations.map(dataBase.getAllRecipes()) {
+    val recipes: LiveData<List<Recipe>> = Transformations.map(localDataSource.observeAllRecipes()) {
         it.asDomainRecipe()
     }
 
-    fun saveRecipe(recipe: Recipe) {
-        GlobalScope.launch {
-            dataBase.insertRecipe(recipe.asDatabaseRecipe())
+    override suspend fun saveRecipe(recipe: Recipe) = withContext(ioDispatcher) {
+        localDataSource.insertRecipe(recipe.asDatabaseRecipe())
         }
-    }
 
-    fun deleteRecipe(recipe: Recipe) {
-        GlobalScope.launch {
-            dataBase.deleteRecipe(recipe.asDatabaseRecipe())
-        }
-    }
 
-    suspend fun getRecipeById(recipeId: String): Result<Recipe> =
+    override suspend fun deleteRecipe(recipe: Recipe) =
+        withContext(ioDispatcher) {
+          localDataSource.deleteRecipe(recipe.asDatabaseRecipe())
+            }
+
+    override suspend fun getRecipeById(recipeId: String): Result<Recipe> =
         withContext(ioDispatcher) {
             try {
-                val recipe = dataBase.getRecipeById(recipeId)
+                val recipe = localDataSource.getRecipeById(recipeId)
                 if (recipe != null) {
                     return@withContext Result.Success(recipe.asDomainRecipe())
                 } else {
@@ -44,7 +42,9 @@ class AppRepository {
                 return@withContext Result.Error(e)
             }
         }
-    fun observeRecipeById(recipeId: String) : LiveData<Recipe> = Transformations.map(dataBase.observeRecipeById(recipeId)){
-        it.asDomainRecipe()
-    }
+
+    override fun observeRecipeById(recipeId: String): LiveData<Recipe> =
+        Transformations.map(localDataSource.observeRecipeById(recipeId)) {
+            it.asDomainRecipe()
+        }
 }

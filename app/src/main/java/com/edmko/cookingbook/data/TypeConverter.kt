@@ -1,4 +1,4 @@
-package com.edmko.cookingbook.db
+package com.edmko.cookingbook.data
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

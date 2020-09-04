@@ -1,4 +1,4 @@
-package com.edmko.cookingbook.db
+package com.edmko.cookingbook.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -16,7 +16,6 @@ data class DatabaseRecipe(
     @ColumnInfo(name = "tags") var tags: String,
     @ColumnInfo(name = "link") var link: String
 )
-
 fun List<DatabaseRecipe>.asDomainRecipe(): List<Recipe> {
     return map {
         Recipe(

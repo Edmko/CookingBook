@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">CookingBook</string>
+    <string name="save_recipe">Зберегти рецепт</string>
+    <string name="notes">Нотатки</string>
+    <string name="add_ingredient">Додати інгрідієнт</string>
+    <string name="value">Вага</string>
+    <string name="ingredient">Інгрідієнт</string>
+    <string name="tags">Тег</string>
+    <string name="image_of_recipe">Зображення рецепта</string>
+    <string name="name">Назва рецепта</string>
+    <string name="author">Автор</string>
+    <string name="ingredients">Інгрідієнти:</string>
+    <string name="notes_v">Нотатки:</string>
+    <string name="edit_recipe">Змініти рецепт</string>
+    <string name="deleteRecipe">Видалити рецепт?</string>
+    <string name="delete">Видалити</string>
+    <string name="cancel">Відмінити</string>
+    <string name="add_tag">Додати тег</string>
+    <string name="link">Силка на Youtube</string>
+</resources>

@@ -10,7 +10,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.edmko.cookingbook.R
-import com.edmko.cookingbook.db.DatabaseRecipe
+import com.edmko.cookingbook.data.DatabaseRecipe
 import kotlinx.android.synthetic.main.recipe_card.view.*
 
 class RecipeAdapterVertical(
@@ -47,7 +47,7 @@ class RecipeAdapterVertical(
         )
     }
 
-    inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.image
         val recipeName: TextView = itemView.recipe_name
         val recipeAuthor: TextView = itemView.recipe_author

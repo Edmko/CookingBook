@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,7 +15,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.edmko.cookingbook.R
+import com.edmko.cookingbook.ViewModelFactory
+import com.edmko.cookingbook.repository.AppRepository
 import com.edmko.cookingbook.ui.addRecipe.IngredientsAdapter
+import com.edmko.cookingbook.ui.main.MainViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.add_recipe_fragment.ingredientsList
@@ -22,7 +26,7 @@ import kotlinx.android.synthetic.main.recipe_fragment.*
 
 class RecipeFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var viewModel: RecipeViewModel
+    private val viewModel by viewModels<RecipeViewModel> { ViewModelFactory(AppRepository(), this) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,9 +38,7 @@ class RecipeFragment : Fragment(), View.OnClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val args = RecipeFragmentArgs.fromBundle(requireArguments()).recipeId
-        viewModel = ViewModelProvider(this).get(RecipeViewModel::class.java)
         viewModel.getRecipe(args)
-
 
         editBtn.setOnClickListener(this)
         deleteBtn.setOnClickListener(this)
@@ -89,7 +91,7 @@ class RecipeFragment : Fragment(), View.OnClickListener {
                 val dialog = AlertDialog.Builder(activity)
                 dialog.setTitle(getString(R.string.deleteRecipe))
                     .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                        viewModel.repository.deleteRecipe(viewModel.recipe.value!!)
+                        viewModel.deleteRecipe(viewModel.recipe.value!!)
                         findNavController().navigate(
                             RecipeFragmentDirections.actionRecipeFragmentToMainFragment()
                         )

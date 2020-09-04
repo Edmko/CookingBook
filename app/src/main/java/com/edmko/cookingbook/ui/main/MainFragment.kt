@@ -9,11 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.edmko.cookingbook.R
+import com.edmko.cookingbook.ViewModelFactory
+import com.edmko.cookingbook.repository.AppRepository
 import com.yarolegovich.discretescrollview.InfiniteScrollAdapter
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -21,7 +24,7 @@ import kotlinx.android.synthetic.main.main_fragment.*
 
 class MainFragment : Fragment() {
 
-    lateinit var viewModel: MainViewModel
+    private val viewModel by viewModels<MainViewModel> {ViewModelFactory(AppRepository(), this)}
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -30,7 +33,6 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_addRecipeFragment)

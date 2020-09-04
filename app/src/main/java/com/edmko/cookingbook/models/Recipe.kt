@@ -1,7 +1,7 @@
 package com.edmko.cookingbook.models
 
-import com.edmko.cookingbook.db.DatabaseRecipe
-import com.edmko.cookingbook.db.TypeConverter
+import com.edmko.cookingbook.data.DatabaseRecipe
+import com.edmko.cookingbook.data.TypeConverter
 
 data class Recipe(
     var id: String,
