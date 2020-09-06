@@ -17,4 +17,6 @@
     <string name="cancel">Відмінити</string>
     <string name="add_tag">Додати тег</string>
     <string name="link">Силка на Youtube</string>
+    <string name="contact">Контакти: \n Почта: edmko195@gmail.com</string>
+    <string name="about">Політика конфіденціальності</string>
 </resources>

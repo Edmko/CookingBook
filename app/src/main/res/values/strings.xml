@@ -17,4 +17,6 @@
     <string name="cancel">Cancel</string>
     <string name="add_tag">Add Tag</string>
     <string name="link">Youtube link</string>
+    <string name="contact">Contact information: \n mail: edmko195@gmail.com</string>
+    <string name="about">About</string>
 </resources>
