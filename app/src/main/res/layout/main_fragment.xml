@@ -9,12 +9,14 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".ui.main.MainFragment">
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/preview_vertical"
+        android:id="@+id/recyclerView_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingTop="85dp"
+        android:paddingBottom="90dp"
         android:overScrollMode="never"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
@@ -46,23 +48,25 @@
                 android:hint="@string/name"
                 app:startIconDrawable="@drawable/ic_baseline_search_24">
 
-
+                <com.yarolegovich.discretescrollview.DiscreteScrollView
+                    android:id="@+id/recyclerView_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone" />
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/search_text"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"/>
             </com.google.android.material.textfield.TextInputLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.yarolegovich.discretescrollview.DiscreteScrollView
-        android:id="@+id/preview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:visibility="gone" />
+
 
 
 

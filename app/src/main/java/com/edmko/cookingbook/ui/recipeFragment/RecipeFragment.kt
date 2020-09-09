@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -19,6 +20,7 @@ import com.edmko.cookingbook.ViewModelFactory
 import com.edmko.cookingbook.repository.AppRepository
 import com.edmko.cookingbook.ui.addRecipe.IngredientsAdapter
 import com.edmko.cookingbook.ui.main.MainViewModel
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.add_recipe_fragment.ingredientsList
@@ -69,6 +71,15 @@ class RecipeFragment : Fragment(), View.OnClickListener {
                         )
 
                         super.onReady(youTubePlayer)
+                    }
+
+                    override fun onError(
+                        youTubePlayer: YouTubePlayer,
+                        error: PlayerConstants.PlayerError
+                    ) {
+                        Toast.makeText(context,"Bad YouTube Link",Toast.LENGTH_LONG).show()
+                        youtube_player_view.visibility = View.GONE
+                        super.onError(youTubePlayer, error)
                     }
 
                     override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {

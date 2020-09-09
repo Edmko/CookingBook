@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.edmko.cookingbook.R
 import com.edmko.cookingbook.utils.OnTagClickListener
+
 import kotlinx.android.synthetic.main.tags_recycler_item.view.*
 
 class TagsAdapter(
@@ -18,20 +19,20 @@ class TagsAdapter(
         return data.size
     }
 
-    override fun onBindViewHolder(holder: TagsAdapter.TagsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TagsViewHolder, position: Int) {
         holder.tag.text = data[position]
         holder.itemView.setOnClickListener { listener.onItemClick(position) }
     }
 
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagsAdapter.TagsViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagsViewHolder {
         return TagsViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.tags_recycler_item, parent, false)
         )
     }
 
-    inner class TagsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class TagsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tag: TextView = itemView.tag_item
     }
 }

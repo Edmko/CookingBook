@@ -9,4 +9,5 @@ interface RecipesRepository {
     suspend fun deleteRecipe(recipe: Recipe)
     suspend fun getRecipeById(recipeId: String): Result<Recipe>
     fun observeRecipeById(recipeId: String): LiveData<Recipe>
+    suspend fun updateRecipe(recipe: Recipe)
 }

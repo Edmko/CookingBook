@@ -29,6 +29,10 @@ class AppRepository : RecipesRepository{
           localDataSource.deleteRecipe(recipe.asDatabaseRecipe())
             }
 
+    override suspend fun updateRecipe(recipe: Recipe) = withContext(ioDispatcher){
+        localDataSource.updateRecipe(recipe.asDatabaseRecipe())
+    }
+
     override suspend fun getRecipeById(recipeId: String): Result<Recipe> =
         withContext(ioDispatcher) {
             try {

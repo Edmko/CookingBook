@@ -13,11 +13,9 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.decodeBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -31,7 +29,6 @@ import com.edmko.cookingbook.R
 import com.edmko.cookingbook.ViewModelFactory
 import com.edmko.cookingbook.databinding.AddRecipeFragmentBinding
 import com.edmko.cookingbook.repository.AppRepository
-import com.edmko.cookingbook.ui.main.MainViewModel
 import com.edmko.cookingbook.utils.OnTagClickListener
 import com.edmko.cookingbook.utils.hideKeyboardEx
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -47,7 +44,12 @@ import java.util.*
 class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
 
     private lateinit var viewDataBinding: AddRecipeFragmentBinding
-    private val viewModel by viewModels<AddRecipeViewModel> { ViewModelFactory(AppRepository(), this) }
+    private val viewModel by viewModels<AddRecipeViewModel> {
+        ViewModelFactory(
+            AppRepository(),
+            this
+        )
+    }
     private val args: AddRecipeFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -58,34 +60,50 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
         viewDataBinding = AddRecipeFragmentBinding.bind(root).apply {
             this.viewmodel = viewModel
         }
-
-        // Set the lifecycle owner to the lifecycle of the view
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+
         viewModel.getRecipe(args.recipeId)
 
-        ingredientsList.layoutManager = LinearLayoutManager(context)
-        tags_recycler.layoutManager = FlexboxLayoutManager(activity as Context)
+        initRecyclers()
+        initButtons()
+        listenViewModelEvents()
 
+        super.onActivityCreated(savedInstanceState)
+
+    }
+
+    private fun initButtons() {
         photo.setOnClickListener(this)
         addIngredientButton.setOnClickListener(this)
         save_recipe.setOnClickListener(this)
         addTagButton.setOnClickListener(this)
+    }
 
+    private fun initRecyclers() {
+        ingredientsList.layoutManager = LinearLayoutManager(context)
+        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallBack)
+        itemTouchHelper.attachToRecyclerView(ingredientsList)
+
+        tags_recycler.layoutManager = FlexboxLayoutManager(context)
+    }
+
+    private fun listenViewModelEvents() {
         viewModel.ingredients.observe(viewLifecycleOwner, Observer {
             ingredientsList.adapter = null
             ingredientsList.adapter =
                 IngredientsAdapter(it)
         })
+
         viewModel.tags.observe(viewLifecycleOwner, Observer {
             tags_recycler.adapter = TagsAdapter(it, this)
         })
-        viewModel.image.observe(viewLifecycleOwner, Observer {
 
-            if (it != "") {
+        viewModel.image.observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrBlank()) {
                 photo.background = null
                 Glide.with(requireActivity())
                     .load(it)
@@ -94,30 +112,6 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
             }
 
         })
-
-        val simpleItemTouchCallBack = object : ItemTouchHelper.SimpleCallback(
-            0,
-            ItemTouchHelper.RIGHT
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                viewModel.removeIngredientFromList(
-                    viewHolder.adapterPosition
-                )
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallBack)
-        itemTouchHelper.attachToRecyclerView(ingredientsList)
-
-        super.onActivityCreated(savedInstanceState)
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -129,12 +123,13 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
                 var bitmap: Bitmap? = null
 
                 try {
-                    bitmap = if (Build.VERSION.SDK_INT <=28) {
+                    bitmap = if (Build.VERSION.SDK_INT <= 28) {
                         @Suppress("DEPRECATION")
                         MediaStore.Images.Media.getBitmap(appContext.contentResolver, resultUri)
-                    } else{
-                    val source = ImageDecoder.createSource(appContext.contentResolver, resultUri)
-                    ImageDecoder.decodeBitmap(source)
+                    } else {
+                        val source =
+                            ImageDecoder.createSource(appContext.contentResolver, resultUri)
+                        ImageDecoder.decodeBitmap(source)
                     }
 
                 } catch (e: IOException) {
@@ -168,6 +163,24 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
             }
     }
 
+    private val simpleItemTouchCallBack = object : ItemTouchHelper.SimpleCallback(
+        0,
+        ItemTouchHelper.RIGHT
+    ) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            return false
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            viewModel.removeIngredientFromList(
+                viewHolder.adapterPosition
+            )
+        }
+    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -179,30 +192,36 @@ class AddRecipeFragment : Fragment(), View.OnClickListener, OnTagClickListener {
                     .start(activity as Context, this)
             }
             R.id.addIngredientButton -> {
-                viewModel.addIngredientToList(
-                    Pair(
-                        addIngredient_text.text.toString(),
-                        addValue_text.text.toString()
+                if (!addIngredient_text.text.isNullOrBlank()) {
+                    viewModel.addIngredientToList(
+                        Pair(
+                            addIngredient_text.text.toString(),
+                            addValue_text.text.toString()
+                        )
                     )
-                )
-                addIngredient_text.text?.clear()
-                addValue_text.text?.clear()
-                activity?.hideKeyboardEx()
+                    addIngredient_text.text?.clear()
+                    addValue_text.text?.clear()
+                    activity?.hideKeyboardEx()
+                } else addIngredient_text.error = "Ingredient must have 1 character at least"
             }
             R.id.save_recipe -> {
-
-                val action =
-                    AddRecipeFragmentDirections.actionAddRecipeFragmentToRecipeFragment(
-                        viewModel.saveRecipe()
-                    )
-                findNavController().navigate(action)
+                if (!name_text.text.isNullOrBlank()) {
+                    val action =
+                        AddRecipeFragmentDirections.actionAddRecipeFragmentToRecipeFragment(
+                            viewModel.createRecipe()
+                        )
+                    activity?.hideKeyboardEx()
+                    findNavController().navigate(action)
+                } else name_text.error = "Name must have 1 character at least"
             }
             R.id.addTagButton -> {
-                viewModel.addTagToList(
-                    add_tag_text.text.toString()
-                )
-                add_tag_text.text?.clear()
-                activity?.hideKeyboardEx()
+                if (!add_tag_text.text.isNullOrBlank()) {
+                    viewModel.addTagToList(
+                        add_tag_text.text.toString()
+                    )
+                    add_tag_text.text?.clear()
+                    activity?.hideKeyboardEx()
+                } else add_tag_text.error = "Tag must have 1 character at least"
             }
         }
     }

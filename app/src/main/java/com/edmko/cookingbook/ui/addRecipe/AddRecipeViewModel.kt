@@ -23,7 +23,7 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
     val link = MutableLiveData<String>()
 
     private val _image = MutableLiveData<String>()
-    val image : LiveData<String> = _image
+    val image: LiveData<String> = _image
 
     private val _tags = MutableLiveData<MutableList<String>>()
     val tags: LiveData<MutableList<String>> = _tags
@@ -32,9 +32,7 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
     val ingredients: LiveData<MutableList<Pair<String, String>>> = _ingredients
 
 
-
     private val _dataLoading = MutableLiveData<Boolean>()
-    val dataLoading: LiveData<Boolean> = _dataLoading
 
     private var tempIngredientsList = mutableListOf<Pair<String, String>>()
     private var tempTagList = mutableListOf<String>()
@@ -45,31 +43,29 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
 
     private var isDataLoaded = false
 
-    private val TAG = "myLogs"
     fun getRecipe(recipeId: String?) {
         if (_dataLoading.value == true) {
             return
         }
-            this.recipeId = recipeId
-            if (recipeId == null) {
-                isNewRecipe = true
-                return
-            }
-                if (isDataLoaded) {
-                    return
+        this.recipeId = recipeId
+        if (recipeId == null) {
+            isNewRecipe = true
+            return
+        }
+        if (isDataLoaded) {
+            return
+        }
+
+        isNewRecipe = false
+        _dataLoading.value = true
+
+        viewModelScope.launch {
+            appRepository.getRecipeById(recipeId).let { result ->
+                if (result is Result.Success) {
+                    onRecipeLoaded(result.data)
+                } else {
+                    onDataNotAvailable()
                 }
-
-                isNewRecipe = false
-                _dataLoading.value = true
-
-                viewModelScope.launch {
-                    appRepository.getRecipeById(recipeId).let { result ->
-                        if (result is Result.Success) {
-                            onRecipeLoaded(result.data)
-                        } else {
-                            onDataNotAvailable()
-                        }
-
 
 
             }
@@ -98,7 +94,7 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
     }
 
     fun addIngredientToList(ingred: Pair<String, String>) {
-        tempIngredientsList.add(ingred)
+            tempIngredientsList.add(ingred)
         _ingredients.postValue(tempIngredientsList)
     }
 
@@ -108,7 +104,10 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
     }
 
     fun addTagToList(tag: String) {
-        tempTagList.add(tag)
+        if (tag.isBlank()) {
+            return
+        } else
+            tempTagList.add(tag)
         _tags.postValue(tempTagList)
     }
 
@@ -122,9 +121,9 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
         _image.postValue(url)
     }
 
-    fun saveRecipe(): String {
+    fun createRecipe(): String {
 
-        val currentName = name.value?: ""
+        val currentName = name.value ?: ""
         val currentAuthor = author.value ?: ""
         val currentNotes = notes.value ?: ""
         val currentTags = tags.value ?: mutableListOf()
@@ -134,6 +133,7 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
 
         var currentRecipeId = recipeId
         if (recipeId == null) {
+
             currentRecipeId = UUID.randomUUID().toString()
         }
         val recipe = Recipe(
@@ -146,14 +146,14 @@ class AddRecipeViewModel(private val appRepository: AppRepository) : ViewModel()
             link = currentLink.removePrefix("https://youtu.be/"),
             notes = currentNotes
         )
-        createRecipe(recipe)
+        saveRecipe(recipe)
         return currentRecipeId
     }
 
-    private fun createRecipe(newRecipe: Recipe) = viewModelScope.launch  {
-        appRepository.saveRecipe(newRecipe)
+    private fun saveRecipe(recipe: Recipe) = viewModelScope.launch {
+        if (isNewRecipe)  {appRepository.saveRecipe(recipe)}
+        else appRepository.updateRecipe(recipe)
     }
-
 
 
 }
