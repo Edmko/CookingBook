@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.edmko.cookingbook.ui.main.MainFragment"
+        android:name="com.edmko.cookingbook.ui.recipes.RecipesFragment"
         android:label="main_fragment"
         tools:layout="@layout/main_fragment" >
         <action
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/addRecipeFragment"
-        android:name="com.edmko.cookingbook.ui.addRecipe.AddRecipeFragment"
+        android:name="com.edmko.cookingbook.ui.addrecipe.AddRecipeFragment"
         android:label="AddRecipeFragment"
         tools:layout="@layout/add_recipe_fragment">
         <argument
@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/recipeFragment"
-        android:name="com.edmko.cookingbook.ui.recipeFragment.RecipeFragment"
+        android:name="com.edmko.cookingbook.ui.recipedetail.RecipeDetailFragment"
         android:label="recipe_fragment"
         tools:layout="@layout/recipe_fragment">
     <argument

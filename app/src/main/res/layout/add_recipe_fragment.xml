@@ -9,7 +9,7 @@
 
         <variable
             name="viewmodel"
-            type="com.edmko.cookingbook.ui.addRecipe.AddRecipeViewModel" />
+            type="com.edmko.cookingbook.ui.addrecipe.AddRecipeViewModel" />
     </data>
 
     <RelativeLayout
@@ -28,7 +28,7 @@
                 android:layout_marginEnd="15dp"
                 android:orientation="vertical"
 
-                tools:context=".ui.addRecipe.AddRecipeFragment">
+                tools:context=".ui.addrecipe.AddRecipeFragment">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
