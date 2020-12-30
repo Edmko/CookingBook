@@ -9,10 +9,15 @@ import com.edmko.cookingbook.R
 import kotlinx.android.synthetic.main.ingredient_card.view.*
 
 class IngredientsAdapter(
-    private val data: List<Pair<String, String>>
+
 ) : RecyclerView.Adapter<IngredientsAdapter.IngredientsViewHolder>() {
+    private val data= mutableListOf<Pair<String, String>>()
 
-
+    fun setData(ingredients: List<Pair<String, String>>){
+        data.clear()
+        data.addAll(ingredients)
+        notifyDataSetChanged()
+    }
     override fun getItemCount(): Int {
         return data.size
     }

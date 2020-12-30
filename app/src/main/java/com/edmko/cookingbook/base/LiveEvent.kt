@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 /**
  * Send event to observer if did not get the current value.
  * This realization we can use for events like notifications and errors (as sample to show in toasts, snackbars, dialogs)
- * You can always make [LiveEvent] from [androidx.lifecycle.LiveData] use extension [ru.agima.mycars.base.utils.toLiveEvent]
+ * You can always make [LiveEvent] from [androidx.lifecycle.LiveData] use extension [com.edmko.cookingbook.base.utils.toLiveEvent]
  * Details of this solution https://proandroiddev.com/livedata-with-single-events-2395dea972a8
  * As sample use
  * private val notificationMutableLiveData = MutableLiveData<DialogEvent>()

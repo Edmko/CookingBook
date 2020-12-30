@@ -11,8 +11,6 @@ import java.util.*
 import javax.inject.Inject
 
 class AddRecipeViewModel @Inject constructor(val model: RecipesRepositoryImpl) : BaseViewModel() {
-    private var _recipe = MutableLiveData<Recipe>()
-    val recipe: LiveData<Recipe> = _recipe
 
     val name = MutableLiveData<String>()
 
@@ -44,6 +42,7 @@ class AddRecipeViewModel @Inject constructor(val model: RecipesRepositoryImpl) :
     private var isDataLoaded = false
 
     fun getRecipe(recipeId: String?) {
+
         if (_dataLoading.value == true) {
             return
         }
@@ -59,17 +58,11 @@ class AddRecipeViewModel @Inject constructor(val model: RecipesRepositoryImpl) :
         isNewRecipe = false
         _dataLoading.value = true
 
-//        viewModelScope.launch {
-//            recipesRepository.getRecipeById(recipeId).let { result ->
-//                if (result is Result.Success) {
-//                    onRecipeLoaded(result.data)
-//                } else {
-//                    onDataNotAvailable()
-//                }
-//
-//
-//            }
-//        }
+        viewModelScope.launch {
+            model.getRecipeById(recipeId)?.let { result ->
+                    onRecipeLoaded(result)
+            }?: onDataNotAvailable()
+        }
     }
 
     private fun onDataNotAvailable() {
@@ -132,8 +125,7 @@ class AddRecipeViewModel @Inject constructor(val model: RecipesRepositoryImpl) :
         val currentImage = _image.value ?: ""
 
         var currentRecipeId = recipeId
-        if (recipeId == null) {
-
+        if (isNewRecipe) {
             currentRecipeId = UUID.randomUUID().toString()
         }
         val recipe = Recipe(
@@ -151,7 +143,8 @@ class AddRecipeViewModel @Inject constructor(val model: RecipesRepositoryImpl) :
     }
 
     private fun saveRecipe(recipe: Recipe) = viewModelScope.launch {
-        if (isNewRecipe)  {model.saveRecipe(recipe)}
+        if (isNewRecipe)  {
+            model.saveRecipe(recipe)}
         else model.updateRecipe(recipe)
     }
 

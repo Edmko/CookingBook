@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class RecipeDetailViewModel @Inject constructor(val model: RecipeDetailModel) : BaseViewModel() {
+
     lateinit var recipe: LiveData<Recipe>
 
     var currentSecondYouTube = 0F

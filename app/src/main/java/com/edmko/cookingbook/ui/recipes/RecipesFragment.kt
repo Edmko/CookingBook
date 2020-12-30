@@ -1,20 +1,22 @@
 package com.edmko.cookingbook.ui.recipes
 
-import android.os.Bundle
-import android.view.ViewTreeObserver
+import android.view.View
 import androidx.core.widget.doAfterTextChanged
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.edmko.cookingbook.R
 import com.edmko.cookingbook.base.BaseFragment
 import com.edmko.cookingbook.base.utils.injectViewModel
 import com.edmko.cookingbook.coredi.App
+import com.edmko.cookingbook.databinding.AddRecipeFragmentBinding
 import com.edmko.cookingbook.databinding.MainFragmentBinding
 import com.edmko.cookingbook.models.Recipe
 import com.edmko.cookingbook.ui.recipes.adapter.RecipeAdapter
 import com.edmko.cookingbook.ui.recipes.di.RecipesComponent
 import com.edmko.cookingbook.utils.OnItemClickListener
+import com.edmko.cookingbook.utils.afterMeasured
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
 
@@ -25,35 +27,48 @@ class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>(), O
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    override fun getViewModel(): RecipesViewModel? = injectViewModel(viewModelFactory)
+    override fun getViewModel(): RecipesViewModel = injectViewModel(viewModelFactory)
 
     override fun injectDependencies() {
         val applicationProvider = (requireActivity().application as App).getApplicationProvider()
         RecipesComponent.build(applicationProvider).inject(this)
     }
 
-    lateinit var adapter: RecipeAdapter
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        floatingActionButton.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_addRecipeFragment)
-        }
+    override fun setupView(view: View) {
         initRecyclerView()
         listenViewModel()
-        search_text.doAfterTextChanged { editable -> adapter.filter.filter(editable) }
-
+        view.findViewById<FloatingActionButton>(R.id.floatingActionButton).setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_addRecipeFragment)
+        }
+        view.findViewById<TextInputEditText>(R.id.search_text)
+            .doAfterTextChanged { editable -> adapter.filter.filter(editable) }
     }
 
+    override fun setBinding(root: View) {
+        binding = MainFragmentBinding.bind(root).apply {
+            viewmodel = getViewModel()
+        }
+    }
+
+    lateinit var adapter: RecipeAdapter
+
     override fun onItemClick(id: String) {
-        val action = RecipesFragmentDirections.actionMainFragmentToRecipeFragment(id)
-        findNavController().navigate(action)
+        navigateToRecipeFragment(id)
     }
 
     private fun initRecyclerView() {
         adapter = RecipeAdapter(this)
         recyclerView_vertical.adapter = adapter
+        recyclerView_vertical.afterMeasured {
+            translationY = -appBar.height.toFloat()
+            layoutParams.height =
+                height + appBar.height
+        }
+    }
+
+    private fun navigateToRecipeFragment(id: String) {
+        val action = RecipesFragmentDirections.actionMainFragmentToRecipeFragment(id)
+        findNavController().navigate(action)
     }
 
     private fun updateDataList(list: List<Recipe>) {
@@ -61,24 +76,11 @@ class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>(), O
     }
 
     private fun listenViewModel() {
-        getViewModel()?.recipeList?.observe(viewLifecycleOwner, Observer { recipeList ->
-            recyclerView_vertical.viewTreeObserver.addOnGlobalLayoutListener(verticalListener)
+
+        getViewModel().recipeList.observe(viewLifecycleOwner) { recipeList ->
+
             updateDataList(recipeList)
-        })
-
-    }
-
-    private val verticalListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-
-        override fun onGlobalLayout() {
-            recyclerView_vertical.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-            recyclerView_vertical.apply {
-                translationY = -appBar.height.toFloat()
-                layoutParams.height =
-                    height + appBar.height
-            }
-
         }
+
     }
 }

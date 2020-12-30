@@ -19,4 +19,7 @@
     <string name="link">Youtube link</string>
     <string name="contact">Contact information: \n mail: edmko195@gmail.com</string>
     <string name="about">About</string>
+    <string name="tag_error">Tag must have 1 character at least</string>
+    <string name="name_error">Name must have 1 character at least</string>
+    <string name="ingredient_error">Ingredient must have 1 character at least</string>
 </resources>

@@ -16,8 +16,9 @@ import com.edmko.cookingbook.models.Recipe
 import com.edmko.cookingbook.utils.OnItemClickListener
 import kotlinx.android.synthetic.main.recipe_card.view.*
 import java.util.*
+import javax.inject.Inject
 
-class RecipeAdapter(
+class RecipeAdapter (
     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>(), Filterable {
 
@@ -52,7 +53,6 @@ class RecipeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-
         return RecipeViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.recipe_card, parent, false
