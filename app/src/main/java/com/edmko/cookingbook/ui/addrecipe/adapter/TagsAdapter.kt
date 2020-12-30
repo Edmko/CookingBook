@@ -10,10 +10,14 @@ import com.edmko.cookingbook.utils.OnTagClickListener
 
 import kotlinx.android.synthetic.main.tags_recycler_item.view.*
 
-class TagsAdapter(
-    private val data: List<String>,
-    private val listener : OnTagClickListener
-) : RecyclerView.Adapter<TagsAdapter.TagsViewHolder>(){
+class TagsAdapter : RecyclerView.Adapter<TagsAdapter.TagsViewHolder>() {
+    private val data = mutableListOf<String>()
+    var onTagClicks : ((Int) -> Unit)? = null
+    fun setData(tags: List<String>) {
+        data.clear()
+        data.addAll(tags)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int {
         return data.size
@@ -21,9 +25,8 @@ class TagsAdapter(
 
     override fun onBindViewHolder(holder: TagsViewHolder, position: Int) {
         holder.tag.text = data[position]
-        holder.itemView.setOnClickListener { listener.onItemClick(position) }
+        holder.itemView.setOnClickListener { onTagClicks?.invoke(position) }
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagsViewHolder {

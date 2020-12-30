@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.edmko.cookingbook.base.BaseViewModel
 import com.edmko.cookingbook.models.Recipe
 import com.edmko.cookingbook.repository.RecipesRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -142,7 +143,7 @@ class AddRecipeViewModel @Inject constructor(val model: RecipesRepositoryImpl) :
         return currentRecipeId
     }
 
-    private fun saveRecipe(recipe: Recipe) = viewModelScope.launch {
+    private fun saveRecipe(recipe: Recipe) = launch {
         if (isNewRecipe)  {
             model.saveRecipe(recipe)}
         else model.updateRecipe(recipe)

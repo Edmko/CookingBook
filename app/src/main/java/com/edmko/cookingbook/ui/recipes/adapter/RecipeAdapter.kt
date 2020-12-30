@@ -1,10 +1,10 @@
 package com.edmko.cookingbook.ui.recipes.adapter
 
+import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,24 +13,39 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.edmko.cookingbook.R
 import com.edmko.cookingbook.models.Recipe
-import com.edmko.cookingbook.utils.OnItemClickListener
 import kotlinx.android.synthetic.main.recipe_card.view.*
 import java.util.*
-import javax.inject.Inject
 
-class RecipeAdapter (
-    private val listener: OnItemClickListener
-) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>(), Filterable {
+class RecipeAdapter : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
-    private var recipeList: MutableList<Recipe> = arrayListOf()
+    private var recipeList: List<Recipe> = arrayListOf()
     private var searchableList: MutableList<Recipe> = arrayListOf()
     private var onNothingFound: (() -> Unit)? = null
+    var onItemClick: ((String) -> Unit)? = null
 
     fun setData(data: List<Recipe>) {
-        recipeList.clear()
         searchableList.clear()
-        recipeList.addAll(data.asReversed())
+        recipeList = data.asReversed()
         searchableList.addAll(recipeList)
+        notifyDataSetChanged()
+    }
+
+    fun filter(filter: Editable?) {
+        searchableList.clear()
+        searchableList = if (filter.isNullOrBlank().not()) {
+            val filterPattern =
+                filter.toString().toLowerCase(Locale.getDefault()).trim { it <= ' ' }
+            recipeList.filter {recipe ->
+                Log.d("TAGS", "tags = ${recipe.tags} + ${recipe.name} + $filterPattern")
+                recipe.author.toLowerCase(Locale.getDefault()).contains(filterPattern)
+                        || recipe.tags.contains(filterPattern)
+                        || recipe.name.toLowerCase(Locale.getDefault()).contains(filterPattern)
+            }.toMutableList()
+        } else recipeList.toMutableList()
+
+        if (searchableList.isEmpty()) {
+            onNothingFound?.invoke()
+        }
         notifyDataSetChanged()
     }
 
@@ -41,7 +56,7 @@ class RecipeAdapter (
     override fun onBindViewHolder(holder: RecipeViewHolder, pos: Int) {
         holder.recipeName.text = searchableList[pos].name
         holder.recipeAuthor.text = searchableList[pos].author
-        holder.itemView.setOnClickListener { listener.onItemClick(searchableList[pos].id) }
+        holder.itemView.setOnClickListener { onItemClick?.invoke(searchableList[pos].id) }
 
         if (searchableList[pos].image.isBlank().not()) {
             Glide.with(holder.itemView.context)
@@ -64,36 +79,5 @@ class RecipeAdapter (
         val image: ImageView = itemView.image
         val recipeName: TextView = itemView.recipe_name
         val recipeAuthor: TextView = itemView.recipe_author
-    }
-
-
-    override fun getFilter(): Filter {
-        return object : Filter() {
-
-
-            private val filterResult = FilterResults()
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                searchableList.clear()
-                if (constraint.isNullOrBlank().not()) {
-                    val filterPattern =
-                        constraint.toString().toLowerCase(Locale.getDefault()).trim { it <= ' ' }
-                    recipeList.forEach {
-                        if (it.name.toLowerCase(Locale.getDefault()).contains(filterPattern) ||
-                            it.author.toLowerCase(Locale.getDefault()).contains(filterPattern) ||
-                            it.tags.contains(filterPattern)
-                        )
-                            searchableList.add(it)
-                    }
-                } else searchableList.addAll(recipeList)
-
-                return filterResult.also {result -> result.values = searchableList }
-            }
-
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                if (searchableList.isNullOrEmpty())
-                    onNothingFound?.invoke()
-                notifyDataSetChanged()
-            }
-        }
     }
 }

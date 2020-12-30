@@ -8,19 +8,16 @@ import com.edmko.cookingbook.R
 import com.edmko.cookingbook.base.BaseFragment
 import com.edmko.cookingbook.base.utils.injectViewModel
 import com.edmko.cookingbook.coredi.App
-import com.edmko.cookingbook.databinding.AddRecipeFragmentBinding
 import com.edmko.cookingbook.databinding.MainFragmentBinding
-import com.edmko.cookingbook.models.Recipe
 import com.edmko.cookingbook.ui.recipes.adapter.RecipeAdapter
 import com.edmko.cookingbook.ui.recipes.di.RecipesComponent
-import com.edmko.cookingbook.utils.OnItemClickListener
 import com.edmko.cookingbook.utils.afterMeasured
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
 
-class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>(), OnItemClickListener {
+class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>() {
 
     override val layoutResId: Int = R.layout.main_fragment
 
@@ -41,7 +38,7 @@ class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>(), O
             findNavController().navigate(R.id.action_mainFragment_to_addRecipeFragment)
         }
         view.findViewById<TextInputEditText>(R.id.search_text)
-            .doAfterTextChanged { editable -> adapter.filter.filter(editable) }
+            .doAfterTextChanged { editable -> recipeAdapter.filter(editable) }
     }
 
     override fun setBinding(root: View) {
@@ -50,16 +47,17 @@ class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>(), O
         }
     }
 
-    lateinit var adapter: RecipeAdapter
-
-    override fun onItemClick(id: String) {
-        navigateToRecipeFragment(id)
-    }
+    lateinit var recipeAdapter: RecipeAdapter
 
     private fun initRecyclerView() {
-        adapter = RecipeAdapter(this)
-        recyclerView_vertical.adapter = adapter
-        recyclerView_vertical.afterMeasured {
+        recipeAdapter = RecipeAdapter()
+        rvRecipes.adapter = recipeAdapter
+
+        recipeAdapter.onItemClick = { recipeId ->
+            navigateToRecipeFragment(recipeId)
+        }
+
+        rvRecipes.afterMeasured {
             translationY = -appBar.height.toFloat()
             layoutParams.height =
                 height + appBar.height
@@ -71,15 +69,9 @@ class RecipesFragment : BaseFragment<RecipesViewModel, MainFragmentBinding>(), O
         findNavController().navigate(action)
     }
 
-    private fun updateDataList(list: List<Recipe>) {
-        adapter.setData(list)
-    }
-
     private fun listenViewModel() {
-
         getViewModel().recipeList.observe(viewLifecycleOwner) { recipeList ->
-
-            updateDataList(recipeList)
+            recipeAdapter.setData(recipeList)
         }
 
     }

@@ -13,7 +13,6 @@ import com.edmko.cookingbook.R
 import com.edmko.cookingbook.base.BaseFragment
 import com.edmko.cookingbook.base.utils.injectViewModel
 import com.edmko.cookingbook.coredi.App
-import com.edmko.cookingbook.databinding.AddRecipeFragmentBinding
 import com.edmko.cookingbook.databinding.RecipeFragmentBinding
 import com.edmko.cookingbook.ui.addrecipe.adapter.IngredientsAdapter
 import com.edmko.cookingbook.ui.recipedetail.di.RecipeDetailComponent
@@ -38,6 +37,12 @@ class RecipeDetailFragment : BaseFragment<RecipeDetailViewModel, RecipeFragmentB
     override fun injectDependencies() {
         val applicationProvider = (requireActivity().application as App).getApplicationProvider()
         RecipeDetailComponent.build(applicationProvider).inject(this)
+    }
+
+    override fun setBinding(root: View) {
+        binding = RecipeFragmentBinding.bind(root).apply {
+            viewmodel = getViewModel()
+        }
     }
 
     private val args: RecipeDetailFragmentArgs by navArgs()
@@ -69,40 +74,36 @@ class RecipeDetailFragment : BaseFragment<RecipeDetailViewModel, RecipeFragmentB
         }
     }
 
-    override fun setBinding(root: View) {
-        binding = RecipeFragmentBinding.bind(root).apply {
-            viewmodel = getViewModel()
+
+    private fun setupYoutubePlayer(link: String) {
+        if (link.isNotEmpty()) {
+            youtube_player_view.addYouTubePlayerListener(object :
+                AbstractYouTubePlayerListener() {
+                override fun onReady(youTubePlayer: YouTubePlayer) {
+                    youTubePlayer.loadVideo(
+                        link, getViewModel().currentSecondYouTube
+                    )
+                    youtube_player_view.visibility = View.VISIBLE
+                    super.onReady(youTubePlayer)
+                }
+
+                override fun onError(
+                    youTubePlayer: YouTubePlayer,
+                    error: PlayerConstants.PlayerError
+                ) {
+                    Toast.makeText(context, "Bad YouTube Link", Toast.LENGTH_LONG).show()
+                    youtube_player_view.visibility = View.GONE
+                    super.onError(youTubePlayer, error)
+                }
+
+                override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
+                    getViewModel().currentSecondYouTube = second
+                    super.onCurrentSecond(youTubePlayer, second)
+                }
+            })
         }
     }
 
-    private fun setupYoutubePlayer(link:String){
-    if (link.isNotEmpty()) {
-        youtube_player_view.addYouTubePlayerListener(object :
-            AbstractYouTubePlayerListener() {
-            override fun onReady(youTubePlayer: YouTubePlayer) {
-                youTubePlayer.loadVideo(
-                    link, getViewModel().currentSecondYouTube
-                )
-                youtube_player_view.visibility = View.VISIBLE
-                super.onReady(youTubePlayer)
-            }
-
-            override fun onError(
-                youTubePlayer: YouTubePlayer,
-                error: PlayerConstants.PlayerError
-            ) {
-                Toast.makeText(context, "Bad YouTube Link", Toast.LENGTH_LONG).show()
-                youtube_player_view.visibility = View.GONE
-                super.onError(youTubePlayer, error)
-            }
-
-            override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
-                getViewModel().currentSecondYouTube = second
-                super.onCurrentSecond(youTubePlayer, second)
-            }
-        })
-    }
-}
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.editBtn -> {

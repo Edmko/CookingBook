@@ -36,7 +36,7 @@
 
 
                     <ImageView
-                        android:id="@+id/photo"
+                        android:id="@+id/imgPhoto"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_marginStart="5dp"
@@ -49,13 +49,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:layout_toEndOf="@+id/photo"
+                        android:layout_toEndOf="@+id/imgPhoto"
                         android:hint="@string/name"
                         app:hintTextColor="@color/colorPrimary">
 
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/name_text"
+                            android:id="@+id/evName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@={viewmodel.name}"
@@ -72,12 +72,12 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/name"
                         android:layout_margin="5dp"
-                        android:layout_toEndOf="@+id/photo"
+                        android:layout_toEndOf="@+id/imgPhoto"
                         android:hint="@string/author"
                         android:inputType="textPersonName">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/author_text"
+                            android:id="@+id/evAuthor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@={viewmodel.author}"
@@ -97,7 +97,7 @@
                     android:hint="@string/link">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/add_link_text"
+                        android:id="@+id/evYoutubeLink"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="5"
@@ -117,7 +117,7 @@
                     android:hint="@string/tags">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/add_tag_text"
+                        android:id="@+id/evTag"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="5"
@@ -129,7 +129,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
-                    android:id="@+id/addTagButton"
+                    android:id="@+id/btnTag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -138,10 +138,11 @@
                     android:textSize="18sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/tags_recycler"
+                    android:id="@+id/rvTags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     android:overScrollMode="never"/>
 
 
@@ -162,7 +163,7 @@
                         android:hint="@string/ingredient">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/addIngredient_text"
+                            android:id="@+id/evIngredient"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:maxLines="1"
@@ -180,7 +181,7 @@
                         android:hint="@string/value">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/addValue_text"
+                            android:id="@+id/evValue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:maxLines="1"
@@ -191,7 +192,7 @@
                 </LinearLayout>
 
                 <Button
-                    android:id="@+id/addIngredientButton"
+                    android:id="@+id/btnAddIngredient"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -215,7 +216,7 @@
                     android:hint="@string/notes">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/notes_text"
+                        android:id="@+id/evNotes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@={viewmodel.notes}" />
@@ -229,7 +230,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <Button
-            android:id="@+id/save_recipe"
+            android:id="@+id/btnSaveRecipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

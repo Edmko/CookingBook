@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.edmko.cookingbook.R
 import kotlinx.android.synthetic.main.ingredient_card.view.*
 
-class IngredientsAdapter(
-
-) : RecyclerView.Adapter<IngredientsAdapter.IngredientsViewHolder>() {
+class IngredientsAdapter : RecyclerView.Adapter<IngredientsAdapter.IngredientsViewHolder>() {
     private val data= mutableListOf<Pair<String, String>>()
 
     fun setData(ingredients: List<Pair<String, String>>){

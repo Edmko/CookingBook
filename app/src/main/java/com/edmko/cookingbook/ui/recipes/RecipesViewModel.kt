@@ -9,15 +9,5 @@ import javax.inject.Inject
 class RecipesViewModel @Inject constructor(
     private val model: RecipesModel
 ) : BaseViewModel(){
-    private val _recipeList = MutableLiveData<List<Recipe>>()
     var recipeList = model.recipes
-
-    init {
-        loadData()
-    }
-
-    fun loadData(){
-
-    }
-
 }
