@@ -11,5 +11,5 @@ interface RecipesRepository {
     suspend fun getRecipeById(recipeId: String): Recipe?
     suspend fun updateRecipe(recipe: Recipe)
     fun observeRecipeById(recipeId: String): LiveData<Recipe>
-
+    suspend fun deleteRecipeById(recipeId: String)
 }

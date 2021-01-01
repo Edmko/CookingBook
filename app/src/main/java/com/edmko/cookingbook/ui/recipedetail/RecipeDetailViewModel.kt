@@ -19,7 +19,7 @@ class RecipeDetailViewModel @Inject constructor(val model: RecipeDetailModel) : 
        recipe = model.observeRecipeById(recipeId)
     }
 
-    fun deleteRecipe(recipe: Recipe){
-        viewModelScope.launch { model.deleteRecipe(recipe) }
+    fun deleteRecipe(recipeId: String){
+        viewModelScope.launch { model.deleteRecipeById(recipeId) }
     }
 }

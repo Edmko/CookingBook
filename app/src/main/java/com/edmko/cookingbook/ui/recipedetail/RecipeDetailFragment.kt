@@ -60,7 +60,7 @@ class RecipeDetailFragment : BaseFragment<RecipeDetailViewModel, RecipeFragmentB
         lifecycle.addObserver(youtube_player_view)
 
         getViewModel().recipe.observe(viewLifecycleOwner) {
-            recipe_name.text = it.name
+            tvName.text = it.name
             author_tv.text = ("Author: " + it.author)
             notesTv.text = it.notes
             if (it.image.isNotEmpty())
@@ -104,33 +104,30 @@ class RecipeDetailFragment : BaseFragment<RecipeDetailViewModel, RecipeFragmentB
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.editBtn -> {
-                val action =
-                    RecipeDetailFragmentDirections.actionRecipeFragmentToAddRecipeFragment(
-                        getViewModel().recipe.value?.id
-                    )
-                findNavController().navigate(action)
-            }
-            R.id.deleteBtn -> {
-                val dialog = AlertDialog.Builder(activity)
-                dialog.setTitle(getString(R.string.deleteRecipe))
-                    .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                        getViewModel().recipe.value?.let { recipe ->
-                            getViewModel().deleteRecipe(
-                                recipe
-                            )
-                        }
-
-                        findNavController().navigate(
-                            RecipeDetailFragmentDirections.actionRecipeFragmentToMainFragment()
-                        )
-                    }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
-                    }
-                    .show()
-            }
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.editBtn -> editRecipe()
+            R.id.deleteBtn -> showDeleteRecipeDialog()
         }
+    }
+
+    private fun editRecipe() {
+        val action =
+            RecipeDetailFragmentDirections.actionRecipeFragmentToAddRecipeFragment(
+                getViewModel().recipe.value?.id
+            )
+        findNavController().navigate(action)
+
+    }
+
+    private fun showDeleteRecipeDialog() {
+        val dialog = AlertDialog.Builder(activity)
+        dialog.setTitle(getString(R.string.deleteRecipe))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                args.recipeId.let {    getViewModel().deleteRecipe(args.recipeId) }
+                findNavController().navigate(RecipeDetailFragmentDirections.actionRecipeFragmentToMainFragment())
+            }.setNegativeButton(getString(R.string.cancel)) { _, _ -> }
+            .show()
     }
 }
 

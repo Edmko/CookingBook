@@ -33,6 +33,10 @@ class RecipesRepositoryImpl @Inject constructor(
         recipeDao.updateRecipe(recipe.asDatabaseRecipe())
     }
 
+    override suspend fun deleteRecipeById(recipeId: String) {
+        recipeDao.deleteById(recipeId)
+    }
+
     override suspend fun getRecipeById(recipeId: String): Recipe? = recipeDao.getRecipeById(recipeId)?.asDomainRecipe()
 
     override fun observeRecipeById(recipeId: String): LiveData<Recipe> =

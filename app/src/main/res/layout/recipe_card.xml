@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/imgPhoto"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/image_of_recipe"
@@ -20,11 +20,11 @@
             android:layout_margin="5dp"/>
 
         <TextView
-            android:id="@+id/recipe_name"
+            android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/image"
+            android:layout_toEndOf="@+id/imgPhoto"
             android:maxLines="2"
             android:text="@string/name"
             android:textAlignment="center"
@@ -32,12 +32,12 @@
             android:textSize="23sp" />
 
         <TextView
-            android:id="@+id/recipe_author"
+            android:id="@+id/tvAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/recipe_name"
+            android:layout_below="@+id/tvName"
             android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/image"
+            android:layout_toEndOf="@+id/imgPhoto"
             android:text="@string/author"
             android:textSize="15sp" />
 

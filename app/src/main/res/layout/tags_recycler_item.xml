@@ -9,7 +9,7 @@
     android:padding="5dp">
 
     <TextView
-        android:id="@+id/tag_item"
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
@@ -21,7 +21,8 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/tag_item"
+        android:layout_toEndOf="@id/tvTitle"
         android:src="@drawable/ic_close_black_24dp"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/remove_tag" />
 </RelativeLayout>
